@@ -93,7 +93,7 @@ void test_background_models() {
     
   }
 
-  test.factory("RooGaussStepBernstein::MzgBkgShapePolyTest(Mzg,stepMean[105,80,150],stepSigma[4,0.01,100],{15.0,c1_test[5,-1e-6,30],c2_test[5,-1e-6,30],c3_test[5,-1e-6,30],c4_test[5,-1e-6,30],c5_test[5,-1e-6,30]})");  
+  test.factory("RooGaussStepBernstein::MzgBkgShapePolyTest(Mzg,stepMean[0],stepSigma[3.0,0.01,100],stepValTest[115,100,130],{c0_test[15],c1_test[5,-1e-6,30],c2_test[5,-1e-6,30],c3_test[5,-1e-6,30],c4_test[5,-1e-6,30],c5_test[5,-1e-6,30]})");  
   
   test.var("Mzg")->setBins(20000,"cache");
   test.var("Mzg")->setRange("ROI",115,180);
@@ -117,7 +117,7 @@ void test_background_models() {
   RooFitResult* polyFitRes = test.pdf("MzgBkgShapePoly")->fitTo(*(test.data("data")),
 								RooFit::SumW2Error(kTRUE),
 								RooFit::Save(kTRUE));
-
+  
   test.pdf("MzgBkgShapePolyTest")->fitTo(*(test.data("data")),
 				     RooFit::Minimizer("Minuit","simplex"),
 				     RooFit::SumW2Error(kTRUE),
@@ -125,6 +125,7 @@ void test_background_models() {
   RooFitResult* polyFitResTest = test.pdf("MzgBkgShapePolyTest")->fitTo(*(test.data("data")),
 								       RooFit::SumW2Error(kTRUE),
 								       RooFit::Save(kTRUE));
+  
   
   
   /*
@@ -182,14 +183,15 @@ void test_background_models() {
   test.pdf("MzgBkgShapePoly")->plotOn(frame,
 				      RooFit::ProjWData(*(test.var("dMzg")),
 							*(test.data("data"))),
-				      RooFit::LineColor(kRed),
-				      RooFit::LineStyle(2)
+				      RooFit::LineColor(kRed)
 				      );
 
   test.pdf("MzgBkgShapePolyTest")->plotOn(frame,
-				      RooFit::ProjWData(*(test.var("dMzg")),
-							*(test.data("data"))),
-				      RooFit::LineColor(kRed)
+					  RooFit::ProjWData(*(test.var("dMzg")),
+							    *(test.data("data"))),
+					  RooFit::LineColor(kGreen-3),
+					  RooFit::LineStyle(2)
+				     
 				      );
   Double_t gPolyChi2 = frame->chiSquare();
   
@@ -200,8 +202,8 @@ void test_background_models() {
 					 RooFit::LineColor(kGreen-3),
 					 RooFit::Name("oldpoly"));
   Double_t polyChi2 = oldpolyframe->chiSquare();
-  RooCurve* theoldpoly = oldpolyframe->getCurve("oldpoly")->Clone("oplyclone");
-  frame->addObject(theoldpoly);
+  //RooCurve* theoldpoly = oldpolyframe->getCurve("oldpoly")->Clone("oplyclone");
+  //frame->addObject(theoldpoly);
   
   //frame->GetYaxis()->SetRangeUser(0,70);
   frame->Draw();

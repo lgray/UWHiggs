@@ -1,15 +1,15 @@
 /*****************************************************************************
- * Project: RooFit                                                           *
- * Package: RooFitModels                                                     *
- *    File: $Id: RooStepBernstein.h 28259 2009-04-16 16:21:16Z wouter $
- * Authors:                                                                  *
- *   Kyle Cranmer (L. Gray for step function and gaussian convoluion piece)
- *                                                                           *
- *                                                                           *
- * Redistribution and use in source and binary forms,                        *
- * with or without modification, are permitted according to the terms        *
- * listed in LICENSE (http://roofit.sourceforge.net/license.txt)             *
- *****************************************************************************/
+* Project: RooFit *
+* Package: RooFitModels *
+* File: $Id: RooStepBernstein.h 28259 2009-04-16 16:21:16Z wouter $
+* Authors: *
+* Kyle Cranmer (L. Gray for step function and gaussian convoluion piece)
+* *
+* *
+* Redistribution and use in source and binary forms, *
+* with or without modification, are permitted according to the terms *
+* listed in LICENSE (http://roofit.sourceforge.net/license.txt) *
+*****************************************************************************/
 #ifndef ROO_GAUSSSTEPBERNSTEIN
 #define ROO_GAUSSSTEPBERNSTEIN
 
@@ -26,11 +26,12 @@ public:
   RooGaussStepBernstein() ;
   RooGaussStepBernstein(const char *name, const char *title,
 			RooAbsReal& _x, RooAbsReal& _mean,
-			RooAbsReal& _sigma, const RooArgList& _coefList) ;
+			RooAbsReal& _sigma, RooAbsReal& _stepVal,
+			const RooArgList& _coefList) ;
 
-  RooGaussStepBernstein(const RooGaussStepBernstein& other, 
-			const char* name = 0);
-  virtual TObject* clone(const char* newname) const 
+  RooGaussStepBernstein(const RooGaussStepBernstein& other,
+const char* name = 0);
+  virtual TObject* clone(const char* newname) const
   { return new RooGaussStepBernstein(*this, newname); }
   inline virtual ~RooGaussStepBernstein() { }
 
@@ -40,13 +41,13 @@ public:
 private:
 
   RooRealProxy _x;
-  RooRealProxy _mean,_sigma;
+  RooRealProxy _mean,_sigma,_stepVal;
   RooListProxy _coefList ;
 
   Double_t evaluate() const;
 
   // Bernstein polynomial PDF with step function convoluted with gaussian
-  ClassDef(RooGaussStepBernstein,1) 
+  ClassDef(RooGaussStepBernstein,1)
 };
 
 #endif
