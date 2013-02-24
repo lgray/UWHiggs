@@ -267,8 +267,8 @@ def prepare_truth_models(ws,cat,mass,channel,turnon,truth):
 def build_fitting_models(ws,cat,mass,order,turnon):
     #ws.var('Mzg').setBins(60000,'cache')
 
-    #cs=['c%i_cat%i[5,-50,50]'%(k+1,cat) for k in range(order)]
-    c2s = ['prod::csqr%i_cat%i(c%i_cat%i[5,0,30],c%i_cat%i)'%(k+1,cat,k+1,cat,k+1,cat) for k in range(order)]
+    cs=['c%i_cat%i[5,1e-6,30]'%(k+1,cat) for k in range(order)]
+    c2s = ['prod::csqr%i_cat%i(c%i_cat%i,c%i_cat%i)'%(k+1,cat,k+1,cat,k+1,cat) for k in range(order)]
     config = ['Mzg',
               'stepVal_cat%i[0.1,0,1.0]'%cat]
     config.append('{c0_cat%[15],'+','.join(c2s)+'}')
@@ -279,16 +279,16 @@ def build_fitting_models(ws,cat,mass,order,turnon):
     #build standard candle model (RooStepBerntein(x)Gaus)
     if turnon == 'erf':        
         ws.factory(
-            "RooGaussian::RSBFitModelReso_cat%i(%s)"%(
+            "RooGaussStepBernstein::RSBFitModelBase_cat%i(%s)"%(
             cat,
             ','.join(['Mzg',
                       'rsb_bias_cat%i[0]'%cat,
-                      'rsb_sigma_cat%i[5,0.01,20]'%cat])
+                      'rsb_sigma_cat%i[5,0.01,20]'%(cat),
+                      'rsb_stepval_cat%i[115,100,130]'%cat,
+                      '{c0_cat%[20],'+','.join(cs)+'}'])
             )
             )
-        ws.factory('FCONV::RSBFitModelBase_cat%i(Mzg,'\
-                   'RSBFitModelTruth_cat%i,'\
-                   'RSBFitModelReso_cat%i)'%(cat,cat,cat))
+                
         # setup extended pdf with dummy values for norm
         # set proper values during toys loop
         ws.factory(

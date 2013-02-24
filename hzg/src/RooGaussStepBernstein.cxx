@@ -45,9 +45,8 @@ namespace {
     const double erf_parm_a = (a+m-x)/(root2*s);
     const double erf_parm_b = (b+m-x)/(root2*s);
 
-    const double ret = 
-      ( std::sqrt(M_PI/2.0)*s*( std::erf(erf_parm_b) - std::erf(erf_parm_a) ));
-    return ( ret > 0 ? ret : 1e-20 );
+    return ( std::sqrt(M_PI/2.0)*s*
+	     ( std::erf(erf_parm_b) - std::erf(erf_parm_a) ));
   }
   double first(const double x, const double m, const double s,
 	       const double a, const double b) {
