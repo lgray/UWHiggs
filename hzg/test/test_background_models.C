@@ -32,7 +32,7 @@ void test_background_models() {
   RooArgSet* obs = test.set("observables");
   RooArgSet* wobs = test.set("observables_weight");
 
-  int category = 4;
+  int category = 2;
 
   char channel[] = Form("electron_cat%i",category);
   char subscriptzg[] = "ee#gamma";
@@ -101,13 +101,13 @@ void test_background_models() {
   test.factory("RooGaussStepBernstein::MzgBkgShapePolyTest(Mzg,stepMean[0],stepSigma[3.0,0.01,100],stepValTest[115,100,130],{c0_test[15],c1_test[5,-1e-6,30],c2_test[5,-1e-6,30],c3_test[5,-1e-6,30],c4_test[5,-1e-6,30],c5_test[5,-1e-6,30]})");  
   
   test.var("Mzg")->setBins(20000,"cache");
-  test.var("Mzg")->setRange("ROI",120,122);
+  test.var("Mzg")->setRange("ROI",119,121);
 
   test.factory("RooGaussian::MzgBkgShapePolyReso(Mzg,meanPoly[0],sigmaPoly[1,0.01,20])");
   
   test.factory("FCONV::MzgBkgShapePolyBase(Mzg,MzgBkgShapePolyShape,MzgBkgShapePolyReso)");
   
-  Double_t sumEntries = test.data("data")->sumEntries("Mzg > 120 && Mzg < 122");
+  Double_t sumEntries = test.data("data")->sumEntries("Mzg > 119 && Mzg < 120");
   test.factory(Form("nBkgShapePoly[%f,%f,%f]",sumEntries, sumEntries*0.25, sumEntries*1.75));
   
   test.factory("RooExtendPdf::MzgBkgShapePoly(MzgBkgShapePolyTest,nBkgShapePoly,\"ROI\")");
@@ -123,11 +123,12 @@ void test_background_models() {
 								RooFit::SumW2Error(kTRUE),
 								RooFit::Save(kTRUE));
   */
-  
+  /*  
   test.pdf("MzgBkgShapePoly")->fitTo(*(test.data("data")),
 				     RooFit::Minimizer("Minuit","simplex"),
 				     RooFit::SumW2Error(kTRUE),
 				     RooFit::Save(kTRUE)); 
+  */
   RooFitResult* polyFitResTest = test.pdf("MzgBkgShapePoly")->fitTo(*(test.data("data")),
 								    RooFit::SumW2Error(kTRUE),
 								    RooFit::Minos(*test.var("nBkgShapePoly")),
@@ -147,7 +148,7 @@ void test_background_models() {
   */
   
   sumEntries = test.data("data_old")->sumEntries("Mzg_old > 115 && Mzg_old < 180");
-  test.factory(Form("nBkgShapeOldPoly[%f,%f,%f]",sumEntries, sumEntries*0.75, sumEntries*1.25));
+  test.factory(Form("nBkgShapeOldPoly[%f,%f,%f]",sumEntries, sumEntries*0.25, sumEntries*1.75));
 
   test.factory("RooExtendPdf::MzgBkgShapeOldPoly(MzgBkgShapeOldPolyBase,nBkgShapeOldPoly,\"\")");
 
@@ -178,18 +179,9 @@ void test_background_models() {
   Double_t expchi2 = frame->chiSquare();
   
   RooPlot* oldpolyframe = test.var("Mzg_old")->frame(115,180,65);
-  /*
-  test.pdf("MzgBkgShapePolyTest")->plotOn(oldpolyframe,
-				      RooFit::ProjWData(*(test.var("dMzg")),
-							*(test.data("data"))),
-				      RooFit::FillColor(kGreen),
-				      RooFit::VisualizeError(*polyFitRes,2.0,kTRUE));
-  test.pdf("MzgBkgShapePolyTest")->plotOn(oldpolyframe,
-				      RooFit::ProjWData(*(test.var("dMzg")),
-							*(test.data("data"))),
-				      RooFit::FillColor(kYellow),
-				      RooFit::VisualizeError(*polyFitRes,1.0,kTRUE));
-  */
+  
+  
+  
   /*
   test.pdf("MzgBkgShapePoly")->plotOn(frame,
 				      RooFit::ProjWData(*(test.var("dMzg")),
@@ -197,12 +189,26 @@ void test_background_models() {
 				      RooFit::LineColor(kRed)
 				      );
   */
-
-  test.pdf("MzgBkgShapePolyTest")->plotOn(frame,
+  /*
+  test.pdf("MzgBkgShapePoly")->plotOn(frame,
+				      RooFit::ProjWData(*(test.var("dMzg")),
+							*(test.data("data"))),
+				      RooFit::FillColor(kGreen),
+				      RooFit::VisualizeError(*polyFitResTest,2.0,kTRUE));
+  test.pdf("MzgBkgShapePoly")->plotOn(frame,
+				      RooFit::ProjWData(*(test.var("dMzg")),
+							*(test.data("data"))),
+				      RooFit::FillColor(kYellow),
+				      RooFit::VisualizeError(*polyFitResTest,1.0,kTRUE));
+  */
+  test.pdf("MzgBkgShapePoly")->plotOn(frame,
 					  RooFit::ProjWData(*(test.var("dMzg")),
 							    *(test.data("data"))),
 					  RooFit::LineColor(kRed)				     
 				      );
+
+  
+
   Double_t gPolyChi2 = frame->chiSquare();
   
   
@@ -228,7 +234,7 @@ void test_background_models() {
   tlx.DrawLatex(0.59,0.66,Form("#chi^{2}_{Old} = %.3f",polyChi2));
   tlx.DrawLatex(0.59,0.55,Form("cat = 2",category));
   
-  canv.Print(Form("bkgshapetest_test_zg_%s.png",channel));  
+  canv.Print(Form("bkgshapetest_test_zg_%s.pdf",channel));  
   canv.Clear();
   canv.SetLogy();
   //frame->GetYaxis()->SetRangeUser(1e-3,70);

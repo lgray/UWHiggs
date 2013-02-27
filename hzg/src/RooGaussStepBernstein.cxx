@@ -3,7 +3,8 @@
 * Package: RooFitModels *
 * @(#)root/roofit:$Id: RooBernstein.cxx 45779 2012-08-31 15:44:51Z moneta $
 * Authors: *
-* Kyle Cranmer
+* Kyle Cranmer (for RooBernstein)
+* Lindsey Gray (for the analytical convolution and step function stuff)
 * *
 *****************************************************************************/
 
@@ -516,10 +517,10 @@ gaus*rootpiover2*poly3*std::erf(erf_parm) ) );
       return fifth(x,mean,sigma,a,b);
       break;
     case 6:
-      return sixth(x,mean,sigma);
-      break;
+      //return sixth(x,mean,sigma);
+      //break;
     default:
-      assert(1 == 0 && "You requested a convolution that we haven't calculated yet!");
+      assert(0 && "You requested a convolution that we haven't calculated yet!");
       return -1;
     }
     return -1;
@@ -551,7 +552,7 @@ gaus*rootpiover2*poly3*std::erf(erf_parm) ) );
       //return sixth(x,mean,sigma);
       //break;
     default:
-      assert(1 == 0 && "You requested a convolution that we haven't calculated yet!");
+      assert(0 && "You requested a convolution that we haven't calculated yet!");
       return -1;
     }
     return -1;
@@ -654,7 +655,7 @@ Int_t RooGaussStepBernstein::getAnalyticalIntegral(RooArgSet& allVars,
 						   RooArgSet& analVars,
 						   const char* rangeName) const
 {  
-  if (matchArgs(allVars, analVars, _x) && _coefList.getSize() <= 6) return 1;
+  if (matchArgs(allVars, analVars, _x) && _coefList.getSize() <= 5) return 1;
   
   return 0;
 }
