@@ -3,7 +3,7 @@
 '''
 File: submit_tuplization.py
 
-Author: Evan Friis, UW Madison
+Author: L. Gray, FNAL
 
 Description: submit UW pattuple jobs via condor.
 
@@ -84,9 +84,10 @@ for sample in sorted(allTuples.keys()):
                                      ' directory for %s\n' % sample)
                     continue            
 
-                options = ["makeHZG=1"]
+                final_states = ['eeg','mmg']
                 if args.diobjects:
-                    options.append("makeDiObject=1")
+                    final_states.append['ee','mm']
+                options = ['channels="%s"'%(','.join(final_states))]
                 options.append("eventView=1")
                 options.append("reportEvery=1000")
                 options.append("maxEvents=-1")
