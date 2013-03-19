@@ -41,6 +41,12 @@ class correction:
         self._lep2CorrPt = self.lep2CorrPt()
         self._gamCorrPt = self.gamCorrPt()
 
+        self._lep1dE = self.lep1dE()
+        self._lep1CorrdE = self.lep1CorrdE()
+        
+        self._lep2dE = self.lep2dE()
+        self._lep2CorrdE = self.lep2CorrdE()
+
         self._lep1CorrEta = self.lep1CorrEta()
         self._lep2CorrEta = self.lep2CorrEta()
         self._gamCorrEta = self.gamCorrEta()
@@ -53,6 +59,12 @@ class correction:
             self._lep1CorrPt = '%sPt'%(self._l1Name)
             self._lep2CorrPt = '%sPt'%(self._l2Name)
             self._gamCorrpt = '%sPt'%(self._gName)
+
+            self._lep1dE = ''
+            self._lep1CorrdE = ''
+
+            self._lep2dE = ''
+            self._lep2CorrdE = ''
             
             self._lep1CorrEta = '%sEta'%(self._l1Name)
             self._lep2CorrEta = '%sEta'%(self._l2Name)
@@ -65,6 +77,12 @@ class correction:
             self._lep1CorrPt = self.lep1CorrPt()
             self._lep2CorrPt = self.lep2CorrPt()
             self._gamCorrPt = self.gamCorrPt()
+
+            self._lep1dE = self.lep1dE()
+            self._lep1CorrdE = self.lep1CorrdE()
+
+            self._lep2dE = self.lep2dE()
+            self._lep2CorrdE = self.lep2CorrdE()
             
             self._lep1CorrEta = self.lep1CorrEta()
             self._lep2CorrEta = self.lep2CorrEta()
@@ -85,12 +103,20 @@ class correction:
         raise Exception('not implemented in base')
     def lep1CorrPhi(self):
         raise Exception('not implemented in base')
+    def lep1dE(self):
+        raise Exception('not implemented in base')
+    def lep1CorrdE(self):
+        raise Exception('not implemented in base')
 
     def lep2CorrPt(self):
         raise Exception('not implemented in base')
     def lep2CorrEta(self):
         raise Exception('not implemented in base')
     def lep2CorrPhi(self):
+        raise Exception('not implemented in base')
+    def lep2dE(self):
+        raise Exception('not implemented in base')
+    def lep2CorrdE(self):
         raise Exception('not implemented in base')
         
     def __call__(self,event):
@@ -100,10 +126,20 @@ class correction:
         corrgs   = []
         Zs = []
         Zgs = []
+        dE1s = []
+        dE2s = []
+        corrdE1s = []
+        corrdE2s = []
         
         corrPtName1 = self._lep1CorrPt
         corrPtName2 = self._lep2CorrPt
         corrPtNameG = self._gamCorrPt
+
+        energyErrorName1 = self._lep1dE
+        corrEnergyErrorName1 = self._lep1CorrdE
+
+        energyErrorName2 = self._lep2dE
+        corrEnergyErrorName2 = self._lep2CorrdE
 
         corrEtaName1 = self._lep1CorrEta
         corrEtaName2 = self._lep2CorrEta
@@ -146,12 +182,28 @@ class correction:
             eta1 = corrEta_1[i]
             phi1 = corrPhi_1[i]
             corre1s[-1].SetPtEtaPhiM(pt1,eta1,phi1,self._leptonMass)
+            if( energyErrorName1 != '' ):
+                dE1s.append(getattr(event,energyErrorName1)[i])
+            else:
+                dE1s.append(1)
+            if( corrEnergyErrorName1 != '' ):                
+                corrdE1s.append(getattr(event,corrEnergyErrorName1)[i])
+            else:
+                corrdE1s.append(1)
             #create e2 corrected LorentzVector and error
             corre2s.append(TLorentzVector())
             pt2 = corrPt_2[i]
             eta2 = corrEta_2[i]
             phi2 = corrPhi_2[i]
             corre2s[-1].SetPtEtaPhiM(pt2,eta2,phi2,self._leptonMass)
+            if( energyErrorName2 != '' ):
+                dE2s.append(getattr(event,energyErrorName2)[i])
+            else:
+                dE2s.append(1)
+            if( corrEnergyErrorName2 != '' ):                
+                corrdE2s.append(getattr(event,corrEnergyErrorName2)[i])
+            else:
+                corrdE2s.append(1)
             #make composite particles
             Zs.append(corre1s[-1]+corre2s[-1])
             Zgs.append(corre1s[-1]+corre2s[-1]+corrgs[-1])
@@ -159,7 +211,11 @@ class correction:
         #add the newly calculated particles back to the event
         #using a common naming
         setattr(event,'ell1',corre1s)
+        setattr(event,'ell1dE',dE1s)
+        setattr(event,'ell1CorrdE',corrdE1s)
         setattr(event,'ell2',corre2s)
+        setattr(event,'ell2dE',dE2s)
+        setattr(event,'ell2CorrdE',corrdE2s)
         setattr(event,'gam',corrgs)
         setattr(event,'Z',Zs)
         setattr(event,'Zg',Zgs)
@@ -182,7 +238,12 @@ class eChan_correction(correction):
     def lep1CorrPhi(self):
         return '%sPhi%s_%s'%(self._l1Name,self._lepCorrName,
                                  self._targetName)
-
+    def lep1dE(self):
+        return '%sEnergyError'%(self._l1Name)
+    def lep1CorrdE(self):
+        return '%sdE%s_%s'%(self._l1Name,self._lepCorrName,
+                                self._targetName)
+    
     def lep2CorrPt(self):
         return '%sPt%s_%s'%(self._l2Name,self._lepCorrName,
                             self._targetName)
@@ -192,6 +253,11 @@ class eChan_correction(correction):
     def lep2CorrPhi(self):
         return '%sPhi%s_%s'%(self._l2Name,self._lepCorrName,
                              self._targetName)
+    def lep2dE(self):
+        return '%sEnergyError'%(self._l2Name)
+    def lep2CorrdE(self):
+        return '%sdE%s_%s'%(self._l2Name,self._lepCorrName,
+                            self._targetName)
 
 class muChan_correction(correction):
     def __init__(self, year, run, channel, datType,
@@ -211,6 +277,10 @@ class muChan_correction(correction):
     def lep1CorrPhi(self):        
         return '%sPhi%s%s'%(self._l1Name,self._lepCorrName,
                             self._targetName)
+    def lep1dE(self):
+        return ''
+    def lep1CorrdE(self):
+        return ''
         
     def lep2CorrPt(self):
         return '%sPt%s%s'%(self._l2Name,self._lepCorrName,
@@ -221,6 +291,10 @@ class muChan_correction(correction):
     def lep2CorrPhi(self):
         return '%sPhi%s%s'%(self._l2Name,self._lepCorrName,
                              self._targetName)
+    def lep2dE(self):
+        return ''
+    def lep2CorrdE(self):
+        return ''
 
 channels = ['electron','muon']
 corrections = { 'electron' : eChan_correction,

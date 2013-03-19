@@ -62,6 +62,9 @@ zg_info = {'procWeight':0,'puWeight':0,'run':0,'lumis':0,'event':0,
            'ell1Pho':TLorentzVector(),'ell2Pho':TLorentzVector(),
            'minDeltaREllPho':0,'nGoodVtx':0,
            'Mzg':0,'Mz':0,'dMzg':0,'dMz':0,
+           'dMl1':0,'dMl2':0,'dMpho':0,
+           'dEl1':0,'dEl2':0,
+           'dECorrl1':0,'dECorrl2':0,
            'r94cat':0,'r94cat_mod':0,
            'phoPdgId':0,'phoMomPdgId':0,'phoFromHiggs':0#,
            #'nPLJet':0,
@@ -78,6 +81,16 @@ def bestZGTree(event,tm):
     zg_info['r94cat'] = event.bestZG_r94cat
     zg_info['r94cat_mod'] = event.bestZG_r94cat_mod
 
+    zg_info['dMl1'] = event.MassErrord1[bestZ]
+    zg_info['dMl2'] = event.MassErrord2[bestZ]
+    zg_info['dMpho'] = event.MassErrord3[bestPho]
+
+    zg_info['dEl1'] = event.ell1dE[bestZ]
+    zg_info['dEl2'] = event.ell2dE[bestZ]
+
+    zg_info['dECorrl1'] = event.ell1CorrdE[bestZ]
+    zg_info['dECorrl2'] = event.ell2CorrdE[bestZ]
+    
     if hasattr(event,'e1SCEta'):
         zg_info['ell1SCEta'] = event.e1SCEta[bestZ]
         zg_info['ell2SCEta'] = event.e2SCEta[bestZ]

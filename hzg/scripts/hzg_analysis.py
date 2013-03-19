@@ -34,7 +34,7 @@ from UWHiggs.hzg.pu_reweighting import pu_S10_CD_reweight, puhistos
 from UWHiggs.hzg.hzg_intlumis import hzg_lumi, hzg_run_indices, hzg_run_probs
 
 #python standard things
-from argparse import ArgumentParser
+from UWHiggs.hzg.argparse import ArgumentParser
 from math import fabs, ceil
 import os,sys
 import numpy as np
@@ -490,7 +490,7 @@ def getRunIndex(run,runYear,runType,datType,leptonType):
 
 parser = ArgumentParser(description='%prog : configurable v\gamma analysis',
                         usage='%prog ++runType={data,A,B,AB} ++leptonType=muon',
-                        prefix_chars='+')
+                        prefix_chars='-+')
 
 parser.add_argument('++runYear',dest='runYear',
                     type=int,help='dataset year')

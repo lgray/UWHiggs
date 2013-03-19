@@ -6,7 +6,7 @@ export hzgpattupledate='2012-12-29'
 
 #ntuple information
 export hzgntupleroot='/hdfs/store/user/lgray/'
-export hzgntuplerevision='02JAN2013v2'
+export hzgntuplerevision='17MARCH2013'
 
 #location of analysis dirs
 export hzganalysisroot='~/HZG_analysis'
